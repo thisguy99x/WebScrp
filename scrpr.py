@@ -46,5 +46,4 @@ def scrape_product_info(urls):
       results.append([url, "Parsing Error"])
 
   return results
-
-
+ 
