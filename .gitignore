@@ -170,5 +170,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# Output files
-product_prices.tmp
+# Custom output files
+product_prices.html
