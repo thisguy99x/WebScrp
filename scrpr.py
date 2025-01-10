@@ -1,62 +1,62 @@
 from bs4 import BeautifulSoup
 import requests
-import time
 
-st = time.time()
-# URLs to scrape and convert data to text 
-pink_skort = requests.get('https://www.popflexactive.com/products/pirouette-skort-tutu-pink').text,
-buttercream_skort = requests.get('https://www.popflexactive.com/products/pirouette-skort-buttercream').text,
-overalls = requests.get('https://thehalara.com/products/adjustable-strap-button-multiple-pockets-plicated-waffle-casual-overalls?pmui=10.1.collection.list.1.jumpsuit&pmuih=jumpsuit&variant=44668209266854').text,
-anua_cleanse = requests.get('https://anua.us/products/heartleaf-quercetinol-pore-deep-cleansing-foam').text,
-anua_lotion = requests.get('https://anua.us/products/heartleaf-70-daily-lotion-copy-1').text,
-lakes_cardigan = requests.get('https://ariembroiderystudio.com/products/the-lakes-cardigan?currency=USD').text
+def scrape_product_info(urls):
+  """
+  Scrapes product name and price from given URLs.
 
-# Each new URL needs a block like these
+  Args:
+      urls: A list of URLs to scrape.
 
-pink_skort_soup = BeautifulSoup(str(pink_skort), 'lxml')
-pink_skort_product = pink_skort_soup.find('h1', class_='product-title', ).text.replace('/n','')
-pink_skort_proice = pink_skort_soup.find('span', class_='price__current').text.replace('/n','')
+  Returns:
+      A list of lists, where each inner list contains 
+      [product_name, price] for each URL.
+  """
+  results = []
+  for url in urls:
+    try:
+      response = requests.get(url)
+      response.raise_for_status()  # Raise an exception for bad status codes
+      soup = BeautifulSoup(response.text, 'html.parser')
 
-buttercream_skort_soup = BeautifulSoup(str(buttercream_skort), 'lxml')
-buttercream_skort_product = buttercream_skort_soup.find('h1', class_='product-title', ).text.replace('/n','')
-buttercream_skort_proice = buttercream_skort_soup.find('span', class_='price__current').text.replace('/n','')
+      # Define website-specific selectors (example)
+      if 'popflexactive.com' in url:
+        product_name = soup.find('h1', class_='product-title').text.strip()
+        price = soup.find('span', class_='price__current').text.strip()
+      elif 'thehalara.com' in url:
+        product_name = soup.find('h1', class_='index_N1_desc__pPriJ index_N1_descIsOp3__J5CG6').text.strip()
+        price = soup.find('span', class_='index_N1_price__1aeXy undefined').text.strip()
+      elif 'anua.us' in url:
+        product_name = soup.find('h1', class_='product-title h2').text.strip()
+        # Find the 'sale-price' element more robustly
+        price_element = soup.find('sale-price') 
+        price = price_element.text.strip() if price_element else "N/A" 
+      else:
+        product_name = "N/A"
+        price = "N/A"
 
-overalls_soup = BeautifulSoup(str(overalls), 'lxml')
-overalls_product = overalls_soup.find('h1', class_='index_N1_desc__pPriJ index_N1_descIsOp3__J5CG6').text.replace('/n','')
-overalls_proice = overalls_soup.find('span', class_='index_N1_price__1aeXy undefined').text.replace('/n','')
+      results.append([product_name, price])
+    except requests.exceptions.RequestException as e:
+      print(f"Error fetching URL {url}: {e}")
+      results.append([url, "Error"]) 
+    except AttributeError:
+      print(f"Error parsing data from URL {url}")
+      results.append([url, "Parsing Error"])
 
-anua_cleanse_soup = BeautifulSoup(str(anua_cleanse), 'lxml')
-anua_cleanse_product = anua_cleanse_soup.find('h1', class_='product-title h2').text.replace('/n','')
-anua_cleanse_proice = anua_cleanse_soup.find('sale-price',
-                                             form="product-form-8257208975638-template--22447971434774__main").text.replace('/n','')
+  return results
 
-anua_lotion_soup = BeautifulSoup(str(anua_lotion), 'lxml')
-anua_lotion_product = anua_lotion_soup.find('h1', class_='product-title h2').text.replace('/n','')
-anua_lotion_proice = anua_lotion_soup.find('sale-price',
-                                           form="product-form-9780587561238-template--22297173295382__main").text.replace('/n','')
+# Example usage:
+urls = [
+    'https://www.popflexactive.com/products/pirouette-skort-tutu-pink',
+    'https://www.popflexactive.com/products/pirouette-skort-buttercream',
+    'https://thehalara.com/products/adjustable-strap-button-multiple-pockets-plicated-waffle-casual-overalls?pmui=10.1.collection.list.1.jumpsuit&pmuih=jumpsuit&variant=44668209266854',
+    'https://anua.us/products/heartleaf-quercetinol-pore-deep-cleansing-foam',
+    'https://anua.us/products/heartleaf-70-daily-lotion-copy-1']
 
-lakes_cardigan_soup = BeautifulSoup(str(lakes_cardigan), 'lxml')
-lakes_cardigan_product = lakes_cardigan_soup.find('h1').text.replace('/n','')
-lakes_cardigan_proice = lakes_cardigan_soup.find('span',
-                                                 class_="price-item price-item--sale price-item--last").text.replace('/n','')
+product_data = scrape_product_info(urls)
 
-# Stores the outputs to variables
-pink_skort_result = (f"The price of {pink_skort_product} is: {pink_skort_proice}\n")
-buttercream_skort_result = (f"The price of {buttercream_skort_product} is: {buttercream_skort_proice}\n")
-overalls_result = (f"The price of {overalls_product} is: {overalls_proice}\n")
-anua_cleanse_result = (f"The price of {anua_cleanse_product} is: {anua_cleanse_proice}\n")
-anua_lotion_result = (f"The price of {anua_lotion_product} is: {anua_lotion_proice}\n")
-lakes_cardigan_result = (f"The price of {lakes_cardigan_product} is:  {lakes_cardigan_proice}\n")
+# Write results to a temporary file
+with open("product_prices.tmp", "w") as f:
+  for row in product_data:
+    f.write(f"{row[0]}: {row[1]}\n") 
 
-# Writing to an existing file (content will be overwritten)
-with open("product_prices.txt", "w") as f:
-    f.write(pink_skort_result)
-    f.write(buttercream_skort_result)
-    f.write(overalls_result)
-    f.write(anua_cleanse_result)
-    f.write(anua_lotion_result)
-    f.write(lakes_cardigan_result)
-
-et = time.time()
-time_result = et - st
-print(f"Wrote file successfully! Took {time_result} seconds")

@@ -171,4 +171,4 @@ cython_debug/
 .pypirc
 
 # Output files
-product_prices.txt
+product_prices.tmp
