@@ -28,9 +28,11 @@ def scrape_product_info(urls):
         price = soup.find('span', class_='index_N1_price__1aeXy undefined').text.strip()
       elif 'anua.us' in url:
         product_name = soup.find('h1', class_='product-title h2').text.strip()
-        # Find the 'sale-price' element more robustly
         price_element = soup.find('sale-price') 
         price = price_element.text.strip() if price_element else "N/A" 
+      elif 'ariembroiderystudio.com' in url:
+        product_name = soup.find('h1').text.strip()
+        price = soup.find('span', class_='price-item price-item--sale price-item--last').text.strip()
       else:
         product_name = "N/A"
         price = "N/A"
@@ -45,18 +47,4 @@ def scrape_product_info(urls):
 
   return results
 
-# Example usage:
-urls = [
-    'https://www.popflexactive.com/products/pirouette-skort-tutu-pink',
-    'https://www.popflexactive.com/products/pirouette-skort-buttercream',
-    'https://thehalara.com/products/adjustable-strap-button-multiple-pockets-plicated-waffle-casual-overalls?pmui=10.1.collection.list.1.jumpsuit&pmuih=jumpsuit&variant=44668209266854',
-    'https://anua.us/products/heartleaf-quercetinol-pore-deep-cleansing-foam',
-    'https://anua.us/products/heartleaf-70-daily-lotion-copy-1']
-
-product_data = scrape_product_info(urls)
-
-# Write results to a temporary file
-with open("product_prices.tmp", "w") as f:
-  for row in product_data:
-    f.write(f"{row[0]}: {row[1]}\n") 
 
