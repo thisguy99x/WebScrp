@@ -1,4 +1,4 @@
-WebScrp Tool V 0.1
+WebScrp Tool V 0.3
 
 A simple tool to scrape a few websites that a user in interested in. 
 
@@ -8,4 +8,6 @@ their prices. Returns results on a txt file. Will eventually check to see if thi
 ## Installation
 
 Clone repository from https://github.com/thisguy99x/WebScrp
-Run python websites_to_scrape
+Open console and run pip install -r requirements.txt
+CD into the WEBSCRP folder 
+run python start.py
