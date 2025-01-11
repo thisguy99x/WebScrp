@@ -8,5 +8,4 @@ their prices. Returns results on a txt file. Will eventually check to see if thi
 ## Installation
 
 Clone repository from https://github.com/thisguy99x/WebScrp
-Run python your\path\here\scrpr.py
-
+Run python websites_to_scrape
