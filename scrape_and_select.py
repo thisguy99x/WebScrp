@@ -30,9 +30,6 @@ def scrape_product_info(urls):
         product_name = soup.find('h1', class_='product-title h2').text.strip()
         price_element = soup.find('sale-price') 
         price = price_element.text.strip().replace("Sale price","") if price_element else "N/A"
-      elif 'ariembroiderystudio.com' in url:
-        product_name = soup.find('h1').text.strip()
-        price = soup.find('span', class_='price-item price-item--sale price-item--last').text.strip().replace("USD","")
       else:
         product_name = "N/A"
         price = "N/A"
